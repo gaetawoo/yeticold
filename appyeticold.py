@@ -14,6 +14,8 @@ import qrcode
 from datetime import datetime
 import time
 import sys
+import lsb_release
+import re
 
 #VARIABLES
 app = Flask(__name__)
@@ -901,7 +903,13 @@ def YCprintpage():
         img.save(home + '/yeticold/static/firstqrcode' + firstqrname + '.png')
     if request.method == 'POST':
         return redirect('/YCswitchlaptop')
-    return render_template('YCprintpage.html', qrdata=pubdesc, path=path)
+    ordinals = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh']
+    osdescription = lsb_release.get_os_release()['DESCRIPTION']
+    rcp = RCP()
+    btcversionstr = rcp.getnetworkinfo()['subversion']
+    match = re.search('[0-9]+.[0-9]+.[0-9]+', btcversion)
+    btcversion = match.group(0)
+    return render_template('YCprintpage.html', qrdata=pubdesc, path=path, ordinals=ordinals, btcversion='0', osdescription='0')
 
 @app.route("/YCswitchlaptop", methods=['GET', 'POST'])
 def YCswitchlaptop():
